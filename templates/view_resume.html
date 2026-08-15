@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Resume - Resume Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-file-alt"></i>
+                <span>Resume Generator</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="/create" class="nav-link">Create Resume</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="resume-actions-bar">
+            <div>
+                <a href="/dashboard" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+            <div>
+                <a href="/resume/{{ filename }}/edit" class="btn btn-secondary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="/resume/{{ filename }}/pdf" class="btn btn-success">
+                    <i class="fas fa-download"></i> Download PDF
+                </a>
+            </div>
+        </div>
+
+        <div class="resume-preview">
+            <!-- Contact Information -->
+            <div class="resume-section header-section">
+                <h1>{{ resume.contact_info.name }}</h1>
+                <div class="contact-info">
+                    {% if resume.contact_info.email %}
+                        <span><i class="fas fa-envelope"></i> {{ resume.contact_info.email }}</span>
+                    {% endif %}
+                    {% if resume.contact_info.phone %}
+                        <span><i class="fas fa-phone"></i> {{ resume.contact_info.phone }}</span>
+                    {% endif %}
+                    {% if resume.contact_info.location %}
+                        <span><i class="fas fa-map-marker-alt"></i> {{ resume.contact_info.location }}</span>
+                    {% endif %}
+                    {% if resume.contact_info.website %}
+                        <span><i class="fas fa-globe"></i> <a href="{{ resume.contact_info.website }}" target="_blank">{{ resume.contact_info.website }}</a></span>
+                    {% endif %}
+                    {% if resume.contact_info.linkedin %}
+                        <span><i class="fas fa-linkedin"></i> <a href="{{ resume.contact_info.linkedin }}" target="_blank">LinkedIn</a></span>
+                    {% endif %}
+                    {% if resume.contact_info.github %}
+                        <span><i class="fas fa-github"></i> <a href="{{ resume.contact_info.github }}" target="_blank">GitHub</a></span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Professional Summary -->
+            {% if resume.summary %}
+            <div class="resume-section">
+                <h2>Professional Summary</h2>
+                <p>{{ resume.summary }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Work Experience -->
+            {% if resume.experiences %}
+            <div class="resume-section">
+                <h2>Work Experience</h2>
+                {% for exp in resume.experiences %}
+                <div class="resume-entry">
+                    <div class="entry-header">
+                        <h3>{{ exp.position }}</h3>
+                        <span class="date">{{ exp.format_dates() }}</span>
+                    </div>
+                    <p class="company">{{ exp.company }}</p>
+                    {% if exp.description %}
+                    <ul>
+                        {% for desc in exp.description %}
+                        <li>{{ desc }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Education -->
+            {% if resume.education %}
+            <div class="resume-section">
+                <h2>Education</h2>
+                {% for edu in resume.education %}
+                <div class="resume-entry">
+                    <div class="entry-header">
+                        <h3>{{ edu.degree }} in {{ edu.field }}</h3>
+                        <span class="date">{{ edu.graduation_date }}</span>
+                    </div>
+                    <p class="school">{{ edu.school }}</p>
+                    {% if edu.gpa %}
+                    <p>GPA: {{ edu.gpa }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Skills -->
+            {% if resume.skills %}
+            <div class="resume-section">
+                <h2>Skills</h2>
+                {% for skill_cat in resume.skills %}
+                <div class="skill-category">
+                    <h4>{{ skill_cat.category }}</h4>
+                    <div class="skill-tags">
+                        {% for skill in skill_cat.skills %}
+                        <span class="skill-tag">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Languages -->
+            {% if resume.languages %}
+            <div class="resume-section">
+                <h2>Languages</h2>
+                <div class="languages-list">
+                    {% for lang, proficiency in resume.languages.items() %}
+                    <p><strong>{{ lang }}</strong> - {{ proficiency }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Certifications -->
+            {% if resume.certifications %}
+            <div class="resume-section">
+                <h2>Certifications</h2>
+                <ul>
+                    {% for cert in resume.certifications %}
+                    <li>{{ cert }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Resume Generator. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
