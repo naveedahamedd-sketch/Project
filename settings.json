@@ -11,5 +11,11 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.python",
         "editor.formatOnSave": true
+    },
+    "chat.tools.terminal.autoApprove": {
+        "/^python app\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }
