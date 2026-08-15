@@ -84,8 +84,26 @@
     <footer class="footer">
         <p>&copy; 2024 Resume Generator. All rights reserved.</p>
         <p>Built with <i class="fas fa-heart"></i> for your success</p>
+        <p id=\"version-info\" style=\"font-size: 0.85em; margin-top: 10px; color: #7f8c8d;\"></p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src=\"{{ url_for('static', filename='js/main.js') }}\"></script>
+    <script>
+        // Fetch and display version information
+        fetch('/api/version')
+            .then(response => response.json())
+            .then(data => {
+                let versionText = `v${data.version}`;
+                if (data.git_hash) {
+                    versionText += ` (${data.git_hash}`;
+                    if (data.git_branch) {
+                        versionText += ` @ ${data.git_branch}`;
+                    }
+                    versionText += `)`;
+                }
+                document.getElementById('version-info').textContent = versionText;
+            })
+            .catch(error => console.log('Version info unavailable'));
+    </script>
 </body>
 </html>

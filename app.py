@@ -10,6 +10,8 @@ from flask import Flask, render_template, request, jsonify, send_file, redirect,
 from werkzeug.utils import secure_filename
 from resume_generator.resume import Resume, ContactInfo, Experience, Education, Skill, Project
 from resume_generator.pdf_generator import PDFGenerator
+from resume_generator import __version__
+import subprocess
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -19,6 +21,40 @@ app.config['RESUME_FOLDER'] = 'resumes'
 # Create necessary directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['RESUME_FOLDER'], exist_ok=True)
+
+
+@app.route('/api/version')
+def get_version():
+    """Get app version and git info"""
+    version_info = {
+        'version': __version__,
+        'git_hash': None,
+        'git_branch': None
+    }
+    
+    try:
+        # Get git commit hash
+        git_hash = subprocess.check_output(
+            ['git', 'rev-parse', '--short', 'HEAD'],
+            cwd=os.path.dirname(__file__),
+            stderr=subprocess.DEVNULL
+        ).decode('utf-8').strip()
+        version_info['git_hash'] = git_hash
+    except:
+        pass
+    
+    try:
+        # Get git branch name
+        git_branch = subprocess.check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+            cwd=os.path.dirname(__file__),
+            stderr=subprocess.DEVNULL
+        ).decode('utf-8').strip()
+        version_info['git_branch'] = git_branch
+    except:
+        pass
+    
+    return jsonify(version_info)
 
 
 @app.route('/')
